@@ -3,6 +3,7 @@ import {
   ApplicationCommandOptionType,
   SlashCommandBuilder,
   SlashCommandRoleOption,
+  SlashCommandStringOption,
 } from 'discord.js'
 import { BotCommandOption } from '../../types'
 import buildOptions from './buildOptions'
@@ -30,6 +31,7 @@ describe('buildOptions', () => {
     addChannelTypes: jest.fn().mockReturnThis(),
     setMinValue: jest.fn().mockReturnThis(),
     setMaxValue: jest.fn().mockReturnThis(),
+    setAutocomplete: jest.fn().mockReturnThis(),
   }
 
   describe('when there are no options', () => {
@@ -47,6 +49,23 @@ describe('buildOptions', () => {
       type: ApplicationCommandOptionType.Role,
       name: 'mock-option',
       description: 'mock-description',
+    }
+
+    const stringOption: BotCommandOption = {
+      type: ApplicationCommandOptionType.String,
+      name: 'mock-string-option',
+      description: 'mock-string-description',
+      autocomplete: true,
+      choices: [
+        {
+          name: 'choice-1-name',
+          value: 'choice-1-value',
+        },
+        {
+          name: 'choice-2-name',
+          value: 'choice-2-value',
+        },
+      ],
     }
 
     it('adds the relevant option to the command', () => {
@@ -70,6 +89,20 @@ describe('buildOptions', () => {
       )
       expect(mockBuilder.setRequired).toHaveBeenCalledWith(false)
     })
+
+    it('adds an autocomplete string option', () => {
+      buildOptions(mockCmd as unknown as SlashCommandBuilder, [stringOption])
+
+      const { addStringOption } = mockCmd
+
+      const callback = addStringOption?.mock.calls[0][0] as (
+        o: SlashCommandStringOption,
+      ) => SlashCommandStringOption
+
+      callback(mockBuilder as unknown as SlashCommandStringOption)
+      
+      expect(mockBuilder.setAutocomplete).toHaveBeenCalledWith(true)
+    });
   })
 
   describe('when multiple options are passed', () => {
@@ -88,6 +121,7 @@ describe('buildOptions', () => {
           value: 'choice-2-value',
         },
       ],
+      autocomplete: true,
     }
 
     const optionB: BotCommandOption = {
@@ -177,6 +211,14 @@ describe('buildOptions', () => {
       const { addStringOption, addNumberOption, ...rest } = mockCmd
 
       Object.values(rest).forEach((mock) => expect(mock).not.toHaveBeenCalled())
+    })
+
+    it('adds autocomplete options', () => {
+      const callback = mockCmd.addStringOption?.mock.calls[0][0] as jest.Mock
+
+      callback(mockBuilder)
+
+      expect(mockBuilder.setAutocomplete).toHaveBeenNthCalledWith(1, true)
     })
   })
 

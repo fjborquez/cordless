@@ -117,7 +117,8 @@ export type BotCommandOption =
 
 export interface BotCommandStringOption extends BotCommandOptionBase {
   type: ApplicationCommandOptionType.String
-  choices?: APIApplicationCommandOptionChoice<string>[]
+  choices?: APIApplicationCommandOptionChoice<string>[],
+  autocomplete?: boolean
 }
 
 export interface BotCommandIntegerOption extends BotCommandOptionBase {

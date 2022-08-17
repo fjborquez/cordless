@@ -27,6 +27,10 @@ const buildOptions = (
 
           if (option.choices) {
             o.addChoices(...option.choices)
+
+            if (option.autocomplete) {
+              o.setAutocomplete(option.autocomplete)
+            }
           }
 
           return o

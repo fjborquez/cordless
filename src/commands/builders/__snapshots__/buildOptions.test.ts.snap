@@ -44,6 +44,8 @@ Array [
 ]
 `;
 
+exports[`buildOptions snapshots matches the snapshot: setAutocomplete 1`] = `Array []`;
+
 exports[`buildOptions snapshots matches the snapshot: setDescription 1`] = `
 Array [
   Array [
